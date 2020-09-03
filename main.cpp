@@ -132,16 +132,20 @@ void index(){
 }
 void write(){
 	null();
+	int total=0;
 	string blog;
 	int l;
 	system("cls");
-	cout<<"请输入博客内容，按Enter以发布"<<endl; 
-	cin>>blog;	
-	l=blog.length();
+	cout<<"请输入博客内容，输入submit后按Enter以发布(暂时不支持输入空格)"<<endl;
 	ofstream out("blog.txt",ios::app);
-	out<<my<<endl;
-	out<<blog<<endl;
-	out<<l<<endl;
+	while(cin>>blog){
+		if(total==0)
+		out<<my<<endl;
+		total++;
+		out<<blog<<endl;
+		if(blog=="submit")
+		break;
+	}
 	out.close();
 	cout<<"已发布博客，正在返回主页..."<<endl;
 	Sleep(3000);
@@ -155,12 +159,14 @@ void watch(){
 	int l;
 	char c;
 	ifstream in("blog.txt");
-	while(in>>username&&in>>blog){
+	while(in>>username){
 		system("cls");
 		cout<<"按任意键查看下一篇博客,按Q返回主页"<<endl;
-		cout<<"作者："<<username<<endl; 
-		cout<<"内容："<<blog<<endl;
-		cout<<"长度："<<l<<endl;
+		cout<<"作者："<<username<<endl;
+		cout<<"内容："<<endl; 
+		while(in>>blog&&blog!="submit"){
+			cout<<blog<<endl;
+		}
 		c=getch();
 		if(c=='q'||c=='Q'){
 			cout<<"正在为您返回主页..."<<endl;
