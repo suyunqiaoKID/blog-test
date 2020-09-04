@@ -37,6 +37,7 @@ int main(){
 	}
 }
 void sighup(){
+	system("title suyunqiaoKID's blog sigh-up");
 	string username,password,DATA1,DATA2;
 	bool tf=false;
 	cout<<"请输入您的用户名(A-Z,a-z,0-9)"<<endl;
@@ -68,6 +69,7 @@ void sighup(){
 	}
 }
 void sighin(){
+	system("title suyunqiaoKID's blog sigh-in");
 	string username,password;
 	string DATA1,DATA2;
 	cout<<"请输入您的用户名"<<endl;
@@ -97,6 +99,7 @@ void sigh(){
 	return index();
 }
 void index(){
+	system("title suyunqiaoKID's blog index");
 	null();
 	system("cls");
 	char c;
@@ -131,6 +134,7 @@ void index(){
 	}
 }
 void write(){
+	system("title suyunqiaoKID's blog write-blog");
 	null();
 	int total=0;
 	string blog;
@@ -153,6 +157,7 @@ void write(){
 	index();
 }
 void watch(){
+	system("title suyunqiaoKID's blog watch-blog");
 	null();
 	system("cls");
 	string username,blog;
@@ -215,6 +220,7 @@ void super(){
 	}
 }
 void watchman(){
+	system("title suyunqiaoKID's blog administrators-list");
 	null();
 	string DATA;
 	int total=0;
@@ -233,6 +239,7 @@ void watchman(){
 	return super();
 }
 void addman(){
+	system("title suyunqiaoKID's blog add-administrators");
 	null();
 	string username,DATA;
 	bool tf=false;
