@@ -8,7 +8,7 @@ void sighup();
 void sighin();
 void sigh();
 void index();
-void watch();
+void watch(int);
 void write();
 void us();
 void superman();
@@ -16,6 +16,10 @@ void super();
 void addman();
 void watchman();
 void null();
+void mark(int);
+void talk(int);
+void watchtalk(int);
+bool checknum(int);
 bool manb(string);
 char in;
 string my="NULL";
@@ -38,11 +42,13 @@ int main(){
 }
 void sighup(){
 	system("title suyunqiaoKID's blog sigh-up");
-	string username,password,DATA1,DATA2;
+	string username,password,repeat,DATA1,DATA2;
 	bool tf=false;
 	cout<<"请输入您的用户名(A-Z,a-z,0-9)"<<endl;
 	cin>>username;
 	cout<<"请输入您的密码(A-Z,a-z,0-9)"<<endl;
+	cin>>password;
+	cout<<"请确认您的密码(A-Z,a-z,0-9)"<<endl;
 	cin>>password;
 	ifstream in("user.txt");
 	while(in>>DATA1&&in>>DATA2){
@@ -53,6 +59,12 @@ void sighup(){
 	}
 	if(tf==true){
 		cout<<"注册失败，用户名已被登录，正在返回登录界面..."<<endl;
+		Sleep(3000);
+		system("cls");
+		main();
+	}
+	else if(password!=repeat){
+		cout<<"两次输入密码不相同，请确认后重新输入密码"<<endl;
 		Sleep(3000);
 		system("cls");
 		main();
@@ -126,65 +138,144 @@ void index(){
 	c=getch();
 	switch(c){
 		case '1' : write();break;
-		case '2' : watch();break;
+		case '2' : watch(1);break;
 		case '3' : super();break;
 		case '4' : my="NULL";man=false;cout<<"已登出博客，正在返回登录界面...";Sleep(3000);system("cls");main();break;
 		case '5' : system("cls");index();break;
 		default : cout<<"请输入正确代号"<<endl;system("cls");return index();
 	}
 }
+void mark(int x){
+	ofstream out("blog num.txt");
+	out<<x<<endl;
+	out.close();
+	return;
+}
 void write(){
 	system("title suyunqiaoKID's blog write-blog");
 	null();
-	int total=0;
+	int total=0,num;
 	string blog;
 	int l;
 	system("cls");
 	cout<<"请输入博客内容，输入submit后按Enter以发布(暂时不支持输入空格)"<<endl;
 	ofstream out("blog.txt",ios::app);
+	ifstream in("blog num.txt");
+	in>>num;
 	while(cin>>blog){
-		if(total==0)
-		out<<my<<endl;
+		if(total==0){
+			out<<num+1<<endl;
+			out<<my<<endl;
+		}
 		total++;
 		out<<blog<<endl;
 		if(blog=="submit")
 		break;
 	}
+	mark(num+1);
 	out.close();
 	cout<<"已发布博客，正在返回主页..."<<endl;
 	Sleep(3000);
 	system("cls");
 	index();
 }
-void watch(){
+void talk(int x){
+	string talk;
+	cout<<"输入对这个博客的评论叭！"<<endl;
+	cin>>talk;
+	ofstream out("talk.txt",ios::app);
+	out<<x<<endl;
+	out<<my<<endl;
+	out<<talk<<endl;
+	cout<<"发送成功，正在自动返回原博客..."<<endl;
+	Sleep(3000);
+	watch(x);
+}
+void watchtalk(int x){
+	char c; 
+	string talk,name;
+	int DATA,n;
+	n=x;
+	ifstream in("talk.txt");
+	while(in>>DATA&&in>>name&&in>>talk){
+		if(DATA==x){
+			cout<<"评论者："<<name<<endl;
+			cout<<"内容："<<talk<<endl<<endl;
+		}
+	}
+	 cout<<"按任意键返回博客,按Q返回主页"<<endl;
+	 c=getch();
+	 if(c=='q'||c=='Q'){
+			cout<<"正在为您返回主页..."<<endl;
+			Sleep(3000);
+			system("cls");
+			return index();
+		}
+		else
+		watch(x);
+	}
+bool checknum(int x){
+	int num; 
+	ifstream in("blog num.txt");
+	in>>num;
+	if(x>num)
+	return false;
+	return true;
+}
+void watch(int x){
 	system("title suyunqiaoKID's blog watch-blog");
 	null();
 	system("cls");
-	string username,blog;
-	int l;
+	string username,blog,DATA;
+	int l,num;
 	char c;
+	num=x;
+	cout<<"按A查看上一篇博客,按D查看下一篇博客,按Q返回主页,按E发表评论,按W查看该博客评论区"<<endl;
 	ifstream in("blog.txt");
-	while(in>>username){
-		system("cls");
-		cout<<"按任意键查看下一篇博客,按Q返回主页"<<endl;
+	while(checknum(num)){
+		in>>num;
+		if(num!=x){
+			in>>username;
+			while(in>>DATA&&DATA!="submit");
+			continue;
+		}
+		else
+		in>>username;
 		cout<<"作者："<<username<<endl;
 		cout<<"内容："<<endl; 
-		while(in>>blog&&blog!="submit"){
-			cout<<blog<<endl;
-		}
+		while(in>>blog&&blog!="submit")
+		cout<<blog<<endl;
+		cout<<"博客编号："<<num<<endl;
 		c=getch();
 		if(c=='q'||c=='Q'){
 			cout<<"正在为您返回主页..."<<endl;
 			Sleep(3000);
 			system("cls");
 			return index();
+			}
+		else if(c=='e'||c=='E'){
+			cout<<endl;
+			talk(num);
 		}
-		
-	}
-	cout<<"已经是最后一篇博客了，正在为您返回主页..."<<endl;
-	Sleep(3000);
-	system("cls");
-	index();
+		else if(c=='w'||c=='W'){
+			cout<<endl;
+			watchtalk(num);
+		}
+		else if(c=='a'||c=='A'){
+			watch(num-1);
+		}
+		else if(c=='d'||c=='D'){
+			watch(num+1);
+		}
+		else
+		cout<<"请输入正确功能键"<<endl;
+		Sleep(3000);
+		watch(num);
+		}
+		cout<<"已经是最后一篇博客了，正在为您返回主页..."<<endl;
+		Sleep(3000);
+		system("cls");
+		index();
 }
 void superman(){
 	string DATA;
