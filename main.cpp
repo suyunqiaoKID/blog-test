@@ -19,10 +19,16 @@ void null();
 void mark(int);
 void talk(int);
 void watchtalk(int);
+void superwatch();
+void friends(int);
+void search(int);
 bool checknum(int);
+bool checkuser(int);
 bool manb(string);
+int usernum();
 char in;
 string my="NULL";
+int uid=-1;
 bool man=false;
 int main(){
 	char c;
@@ -40,6 +46,46 @@ int main(){
 		default : cout<<"请输入正确代号"<<endl;system("cls");return main();
 	}
 }
+bool checkuser(int x){
+	int num;
+	ifstream in("user num.txt");
+	in>>num;
+	if(x>num)
+	return false;
+	return true;
+}
+void searchnum(){
+	string DATA1,DATA2;
+	int num,x;
+	char c;
+	system("cls");
+	cout<<"请输入用户编号"<<endl;
+	cin>>x;
+	if(checkuser(x)==false){
+		cout<<"未找到该用户，按任意键返回主页."<<endl;
+		c=getch();
+		return index();
+	}
+	ifstream in("user.txt");
+	while(in>>num&&in>>DATA1&&in>>DATA2){
+		if(num==x){
+			cout<<"已为您找到该用户"<<endl;
+			cout<<"用户名："<<DATA1<<endl;
+			cout<<"用户编号："<<num<<endl<<endl;
+			cout<<"按任意键返回主页"<<endl;
+		}
+	}
+	c=getch();
+	return index();
+}
+int usernum(){
+	int num;
+	ifstream in("user num.txt");
+	ofstream out("user num.txt");
+	in>>num;
+	out<<num+1<<endl;
+	return num;	
+}
 void sighup(){
 	system("title suyunqiaoKID's blog sigh-up");
 	string username,password,repeat,DATA1,DATA2;
@@ -49,7 +95,7 @@ void sighup(){
 	cout<<"请输入您的密码(A-Z,a-z,0-9)"<<endl;
 	cin>>password;
 	cout<<"请确认您的密码(A-Z,a-z,0-9)"<<endl;
-	cin>>password;
+	cin>>repeat;
 	ifstream in("user.txt");
 	while(in>>DATA1&&in>>DATA2){
 		if(DATA1==username){
@@ -71,6 +117,7 @@ void sighup(){
 	}
 	else{
 		ofstream out("user.txt",ios::app);
+		out<<usernum()<<endl;
 		out<<username<<endl;
 		out<<password<<endl;
 		out.close();
@@ -84,14 +131,16 @@ void sighin(){
 	system("title suyunqiaoKID's blog sigh-in");
 	string username,password;
 	string DATA1,DATA2;
+	int num;
 	cout<<"请输入您的用户名"<<endl;
 	cin>>username;
 	cout<<"请输入您的密码"<<endl;
 	cin>>password;
 	ifstream in("user.txt");
-	while(in>>DATA1&&in>>DATA2){
+	while(in>>num&&in>>DATA1&&in>>DATA2){
 		if(username==DATA1&&password==DATA2){
 			my=username;
+			uid=num;
 			in.close();
 			return sigh();
 		}
@@ -115,7 +164,7 @@ void index(){
 	null();
 	system("cls");
 	char c;
-	cout<<"欢迎来到suyunqiaoKID的blog！     当前用户："<<my<<"   用户身份：";
+	cout<<"欢迎来到suyunqiaoKID的blog！    当前用户："<<my<<"    用户编号："<<uid<<"   用户身份：";
 	if(man==true)
 	cout<<"管理员"<<endl<<endl;
 	else
@@ -124,8 +173,9 @@ void index(){
 	cout<<"| 1.写博客"<<endl;
 	cout<<"| 2.看博客"<<endl;
 	cout<<"| 3.管理博客"<<endl;
-	cout<<"| 4.登出"<<endl;
-	cout<<"| 5.刷新时间"<<endl;
+	cout<<"| 4.查找用户"<<endl;
+	cout<<"| 5.登出"<<endl;
+	cout<<"| 6.刷新时间"<<endl;
 	cout<<"----------------------------"<<endl;
 	time_t now=time(0);
 	tm*ltm=localtime(&now);
@@ -140,8 +190,9 @@ void index(){
 		case '1' : write();break;
 		case '2' : watch(1);break;
 		case '3' : super();break;
-		case '4' : my="NULL";man=false;cout<<"已登出博客，正在返回登录界面...";Sleep(3000);system("cls");main();break;
-		case '5' : system("cls");index();break;
+		case '4' : searchnum();break;
+		case '5' : my="NULL";man=false;cout<<"已登出博客，正在返回登录界面...";Sleep(3000);system("cls");main();break;
+		case '6' : system("cls");index();break;
 		default : cout<<"请输入正确代号"<<endl;system("cls");return index();
 	}
 }
