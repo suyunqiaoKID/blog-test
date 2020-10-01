@@ -22,15 +22,17 @@ void watchtalk(int);
 void superwatch();
 void friends(int);
 void search(int);
+void usernum();
 bool checknum(int);
 bool checkuser(int);
 bool manb(string);
-int usernum();
+int usernumout();
 char in;
 string my="NULL";
 int uid=-1;
 bool man=false;
 int main(){
+	system("cls");
 	char c;
 	system("title suyunqiaoKID's blog");
 	cout<<"-------------------"<<endl;
@@ -58,44 +60,56 @@ void searchnum(){
 	string DATA1,DATA2;
 	int num,x;
 	char c;
+	bool tf=false;
 	system("cls");
 	cout<<"请输入用户编号"<<endl;
 	cin>>x;
-	if(checkuser(x)==false){
-		cout<<"未找到该用户，按任意键返回主页."<<endl;
-		c=getch();
-		return index();
-	}
 	ifstream in("user.txt");
 	while(in>>num&&in>>DATA1&&in>>DATA2){
 		if(num==x){
+			tf=true;
 			cout<<"已为您找到该用户"<<endl;
 			cout<<"用户名："<<DATA1<<endl;
 			cout<<"用户编号："<<num<<endl<<endl;
 			cout<<"按任意键返回主页"<<endl;
 		}
 	}
+	if(tf==false){
+		cout<<"未找到该用户，按任意键返回"<<endl; 
+	}
 	c=getch();
 	return index();
 }
-int usernum(){
+int usernumout(){
+	int num;
+	ifstream in("user num.txt");
+	in>>num;
+	return num;
+}
+void usernum(){
 	int num;
 	ifstream in("user num.txt");
 	ofstream out("user num.txt");
 	in>>num;
-	out<<num+1<<endl;
-	return num;	
+	out<<num+1<<endl;	
 }
 void sighup(){
 	system("title suyunqiaoKID's blog sigh-up");
 	string username,password,repeat,DATA1,DATA2;
 	bool tf=false;
+	cout<<"如想返回登录界面，请输入'return'以返回"<<endl<<endl;
 	cout<<"请输入您的用户名(A-Z,a-z,0-9)"<<endl;
 	cin>>username;
+	if(username=="return")
+	main();
 	cout<<"请输入您的密码(A-Z,a-z,0-9)"<<endl;
 	cin>>password;
+	if(password=="return")
+	main();
 	cout<<"请确认您的密码(A-Z,a-z,0-9)"<<endl;
 	cin>>repeat;
+	if(repeat=="return")
+	main();
 	ifstream in("user.txt");
 	while(in>>DATA1&&in>>DATA2){
 		if(DATA1==username){
@@ -116,8 +130,9 @@ void sighup(){
 		main();
 	}
 	else{
+		usernum();
 		ofstream out("user.txt",ios::app);
-		out<<usernum()<<endl;
+		out<<usernumout()<<endl;
 		out<<username<<endl;
 		out<<password<<endl;
 		out.close();
@@ -132,10 +147,15 @@ void sighin(){
 	string username,password;
 	string DATA1,DATA2;
 	int num;
+	cout<<"如想返回登录界面，请输入'return'以返回"<<endl<<endl;
 	cout<<"请输入您的用户名"<<endl;
 	cin>>username;
+	if(username=="return")
+	main();
 	cout<<"请输入您的密码"<<endl;
 	cin>>password;
+	if(password=="return")
+	main();
 	ifstream in("user.txt");
 	while(in>>num&&in>>DATA1&&in>>DATA2){
 		if(username==DATA1&&password==DATA2){
