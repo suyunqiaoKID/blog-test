@@ -26,6 +26,7 @@ void watchuserblog(string);
 void usernamesearch(string);
 void usernum();
 void addblack();
+void mark2(int)
 bool checknum(int);
 bool checkuser(int);
 bool manb(string);
