@@ -22,10 +22,14 @@ void watchtalk(int);
 void superwatch();
 void friends(int);
 void search(int);
+void watchuserblog(string);
+void usernamesearch(string);
 void usernum();
+void addblack();
 bool checknum(int);
 bool checkuser(int);
 bool manb(string);
+bool blacktf(string);
 int usernumout();
 char in;
 string my="NULL";
@@ -56,6 +60,29 @@ bool checkuser(int x){
 	return false;
 	return true;
 }
+void usernamesearch(){
+	string username,num,DATA1,DATA2;
+	bool tf;
+	char c;
+	system("cls");
+	cout<<"请输入用户名"<<endl;
+	cin>>username;
+	ifstream in("user.txt");
+	while(in>>num&&in>>DATA1&&in>>DATA2){
+		if(DATA1==username){
+			tf=true;
+			cout<<"已为您找到该用户"<<endl;
+			cout<<"用户名："<<DATA1<<endl;
+			cout<<"用户编号："<<num<<endl<<endl;
+		}
+	}
+	if(tf==false){
+		cout<<"未找到该用户"<<endl; 
+	}
+	cout<<"按任意键返回"<<endl;
+	c=getch();
+	return index();
+}
 void searchnum(){
 	string DATA1,DATA2;
 	int num,x;
@@ -71,12 +98,12 @@ void searchnum(){
 			cout<<"已为您找到该用户"<<endl;
 			cout<<"用户名："<<DATA1<<endl;
 			cout<<"用户编号："<<num<<endl<<endl;
-			cout<<"按任意键返回主页"<<endl;
 		}
 	}
 	if(tf==false){
 		cout<<"未找到该用户，按任意键返回"<<endl; 
 	}
+	cout<<"按任意键返回"<<endl;
 	c=getch();
 	return index();
 }
@@ -97,6 +124,7 @@ void sighup(){
 	system("title suyunqiaoKID's blog sigh-up");
 	string username,password,repeat,DATA1,DATA2;
 	bool tf=false;
+	int num;
 	cout<<"如想返回登录界面，请输入'return'以返回"<<endl<<endl;
 	cout<<"请输入您的用户名(A-Z,a-z,0-9)"<<endl;
 	cin>>username;
@@ -111,7 +139,7 @@ void sighup(){
 	if(repeat=="return")
 	main();
 	ifstream in("user.txt");
-	while(in>>DATA1&&in>>DATA2){
+	while(in>>num&&in>>DATA1&&in>>DATA2){
 		if(DATA1==username){
 			tf=true;
 			break;
@@ -193,9 +221,10 @@ void index(){
 	cout<<"| 1.写博客"<<endl;
 	cout<<"| 2.看博客"<<endl;
 	cout<<"| 3.管理博客"<<endl;
-	cout<<"| 4.查找用户"<<endl;
-	cout<<"| 5.登出"<<endl;
-	cout<<"| 6.刷新时间"<<endl;
+	cout<<"| 4.uid查找用户"<<endl;
+	cout<<"| 5.用户名查找用户"<<endl;
+	cout<<"| 6.登出"<<endl;
+	cout<<"| 7.刷新时间"<<endl;
 	cout<<"----------------------------"<<endl;
 	time_t now=time(0);
 	tm*ltm=localtime(&now);
@@ -211,8 +240,9 @@ void index(){
 		case '2' : watch(1);break;
 		case '3' : super();break;
 		case '4' : searchnum();break;
-		case '5' : my="NULL";man=false;cout<<"已登出博客，正在返回登录界面...";Sleep(3000);system("cls");main();break;
-		case '6' : system("cls");index();break;
+		case '5' : usernamesearch();break;
+		case '6' : my="NULL";man=false;cout<<"已登出博客，正在返回登录界面...";Sleep(3000);system("cls");main();break;
+		case '7' : system("cls");index();break;
 		default : cout<<"请输入正确代号"<<endl;system("cls");return index();
 	}
 }
@@ -371,13 +401,15 @@ void super(){
 	cout<<"----------------------------"<<endl;
 	cout<<"| 1.查看所有管理员"<<endl;
 	cout<<"| 2.添加管理员"<<endl;
-	cout<<"| 3.返回主页"<<endl;
+	cout<<"| 3.将用户加入黑名单"<<endl;
+	cout<<"| 4.返回主页"<<endl;
 	cout<<"----------------------------"<<endl;
 	c=getch();
 	switch(c){
 		case '1' : watchman();break;
 		case '2' : addman();break;
-		case '3' : cout<<"正在为您返回主页...";Sleep(3000);system("cls");index();
+		case '3' : addblack();break;
+		case '4' : cout<<"正在为您返回主页...";Sleep(3000);system("cls");index();
 		default : cout<<"请输入正确代号"<<endl;system("cls");return super();
 	}
 }
@@ -400,16 +432,17 @@ void watchman(){
 	system("cls");
 	return super();
 }
-void addman(){
-	system("title suyunqiaoKID's blog add-administrators");
+void addblack(){
+	system("title suyunqiaoKID's blog add-blackuser-list");
+	string username,DATA,DATA2;
+	int num;
+	bool tf;
 	null();
-	string username,DATA;
-	bool tf=false;
-	ofstream out("superman.txt",ios::app);
+	ofstream out("blacklist.txt",ios::app);
 	ifstream in("user.txt");
-	cout<<"请输入需要添加的管理员用户名"<<endl;
+	cout<<"请输入需要添加的黑名单用户名"<<endl;
 	cin>>username;
-	while(in>>DATA){
+	while(in>>num&&in>>DATA&&in>>DATA2){
 		if(DATA==username){
 			tf=true;
 			break;
@@ -422,7 +455,45 @@ void addman(){
 		return super();
 	}
 	else{
-		if(manb(username)==true){
+		if(blacktf(username)){
+			out<<username<<endl;
+			cout<<"添加成功，正在为您返回管理界面..."<<endl;
+			Sleep(3000);
+			system("cls");
+			super();
+		}
+		else{
+			cout<<username<<"用户已是黑名单用户，正在为您返回管理界面..."<<endl;
+			Sleep(3000);
+			system("cls");
+			return super();
+		}
+	}
+}
+void addman(){
+	system("title suyunqiaoKID's blog add-administrators");
+	null();
+	string username,DATA1,DATA2;
+	int num;
+	bool tf=false;
+	ofstream out("superman.txt",ios::app);
+	ifstream in("user.txt");
+	cout<<"请输入需要添加的管理员用户名"<<endl;
+	cin>>username;
+	while(in>>num&&in>>DATA1&&in>>DATA2){
+		if(DATA1==username){
+			tf=true;
+			break;
+		}
+	}
+	if(!tf){
+		cout<<"未在用户列表中找到"<<username<<"用户，正在为您返回管理界面..."<<endl;
+		Sleep(3000);
+		system("cls");
+		return super();
+	}
+	else{
+		if(manb(username)){
 			out<<username<<endl;
 			cout<<"添加成功，正在为您返回管理界面..."<<endl;
 			Sleep(3000);
@@ -437,6 +508,16 @@ void addman(){
 		}
 	}
 }
+bool blacktf(string username){
+	null();
+	string DATA;
+	ifstream in("blacklist.txt");
+	while(in>>DATA){
+		if(username==DATA)
+		return false;
+	}
+	return true;
+}
 bool manb(string username){
 	null();
 	string DATA;
@@ -448,8 +529,10 @@ bool manb(string username){
 	return true;
 }
 void null(){
-	ios::sync_with_stdio(false);
-	if(my=="NULL"){
+	string blackuser;
+	ifstream in("blacklist.txt");
+	while(in>>blackuser)
+	if(my==blackuser){
 		cout<<"账号状态异常，请重新登录！"<<endl;
 		Sleep(3000);
 		system("cls");
