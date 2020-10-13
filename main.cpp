@@ -25,13 +25,17 @@ void search(int);
 void watchuserblog(string);
 void usernamesearch(string);
 void usernum();
+void bloglike(int);
 void addblack();
-void mark2(int)
+void mark2(int);
+void searchblog();
 bool checknum(int);
 bool checkuser(int);
 bool manb(string);
 bool blacktf(string);
 int usernumout();
+int blognum();
+int checklike(int);
 char in;
 string my="NULL";
 int uid=-1;
@@ -207,6 +211,24 @@ void sigh(){
 	superman();
 	return index();
 }
+int blognum(){
+	int num;
+	ifstream in("blog num.txt");
+	in>>num;
+	in.close();
+	return num;
+}
+void searchblog(){
+	system("cls");
+	int x;
+	cout<<"请输入您想查找的博客编号"<<endl;
+	cin>>x;
+	if(x<=blognum())
+	return watch(x);
+	cout<<"您查找的博客不存在，正在为您返回主页..."<<endl;
+	Sleep(1500);
+	return index();
+}
 void index(){
 	system("title suyunqiaoKID's blog index");
 	null();
@@ -223,8 +245,9 @@ void index(){
 	cout<<"| 3.管理博客"<<endl;
 	cout<<"| 4.uid查找用户"<<endl;
 	cout<<"| 5.用户名查找用户"<<endl;
-	cout<<"| 6.登出"<<endl;
-	cout<<"| 7.刷新时间"<<endl;
+	cout<<"| 6.编号查找博客"<<endl;
+	cout<<"| 7.登出"<<endl;
+	cout<<"| 8.刷新时间"<<endl;
 	cout<<"----------------------------"<<endl;
 	time_t now=time(0);
 	tm*ltm=localtime(&now);
@@ -237,12 +260,13 @@ void index(){
 	c=getch();
 	switch(c){
 		case '1' : write();break;
-		case '2' : watch(1);break;
+		case '2' : watch(blognum());break;
 		case '3' : super();break;
 		case '4' : searchnum();break;
 		case '5' : usernamesearch();break;
-		case '6' : my="NULL";man=false;cout<<"已登出博客，正在返回登录界面...";Sleep(3000);system("cls");main();break;
-		case '7' : system("cls");index();break;
+		case '6' : searchblog();break;
+		case '7' : my="NULL";man=false;cout<<"已登出博客，正在返回登录界面...";Sleep(3000);system("cls");main();break;
+		case '8' : system("cls");index();break;
 		default : cout<<"请输入正确代号"<<endl;system("cls");return index();
 	}
 }
@@ -318,12 +342,36 @@ void watchtalk(int x){
 		watch(x);
 	}
 bool checknum(int x){
-	int num; 
-	ifstream in("blog num.txt");
-	in>>num;
-	if(x>num)
+	if(x<1)
 	return false;
 	return true;
+}
+void bloglike(int num){
+	string username;
+	int n;
+	ofstream out("blog like.txt",ios::app);
+	ifstream in("blog like.txt");
+	while(in>>username&&in>>n){
+		if(username==my&&n==num){
+			cout<<"您已经点赞过该博客了"<<endl;
+			Sleep(1500);
+			return watch(num);
+		}
+	}
+	out<<my<<endl<<num<<endl;
+	cout<<"点赞成功！"<<endl;
+	Sleep(1500);
+	return watch(num);
+}
+int checklike(int x){
+	string username;
+	int num,total=0;
+	ifstream in("blog like.txt");
+	while(in>>username&&in>>num){
+		if(num==x)
+		total++;
+	}
+	return total;
 }
 void watch(int x){
 	system("title suyunqiaoKID's blog watch-blog");
@@ -333,7 +381,7 @@ void watch(int x){
 	int l,num;
 	char c;
 	num=x;
-	cout<<"按A查看上一篇博客,按D查看下一篇博客,按Q返回主页,按E发表评论,按W查看该博客评论区"<<endl;
+	cout<<"按A查看上一篇博客,按D查看下一篇博客,按Q返回主页,按E发表评论,按R点赞,按W查看该博客评论区"<<endl;
 	ifstream in("blog.txt");
 	while(checknum(num)){
 		in>>num;
@@ -349,6 +397,7 @@ void watch(int x){
 		while(in>>blog&&blog!="submit")
 		cout<<blog<<endl;
 		cout<<"博客编号："<<num<<endl;
+		cout<<"点赞数："<<checklike(num)<<endl;
 		c=getch();
 		if(c=='q'||c=='Q'){
 			cout<<"正在为您返回主页..."<<endl;
@@ -365,20 +414,22 @@ void watch(int x){
 			watchtalk(num);
 		}
 		else if(c=='a'||c=='A'){
-			watch(num-1);
+			watch(num+1);
 		}
 		else if(c=='d'||c=='D'){
-			watch(num+1);
+			watch(num-1);
+		}
+		else if(c=='r'||c=='R'){
+			bloglike(num);
 		}
 		else
 		cout<<"请输入正确功能键"<<endl;
 		Sleep(3000);
 		watch(num);
 		}
-		cout<<"已经是最后一篇博客了，正在为您返回主页..."<<endl;
-		Sleep(3000);
-		system("cls");
-		index();
+		cout<<"已经是最后一篇博客了,如需返回请按Q"<<endl;
+		Sleep(1500);
+		watch(num+1); 
 }
 void superman(){
 	string DATA;
